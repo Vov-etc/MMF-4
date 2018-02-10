@@ -1,3 +1,11 @@
+[Dd]ebug
+*.vs
+*.sln
+*.db
+*.opendb
+*.vcxproj
+*.filters
+
 # Prerequisites
 *.d
 

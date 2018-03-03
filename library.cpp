@@ -1,4 +1,5 @@
 #include "library.h"
+#include <algorithm>
 #include <iostream>
 #include <fstream>
 using namespace std;
@@ -35,9 +36,10 @@ void nature_gen(string nature_f, int size) {
     fout.open(nature_f, fstream::out);
     fout << size << endl << endl;
     for (int i = 0; i < size; i++) {
-        double x = (double)(rand() % (W_X * 1000)) / 1000,
-            y = (double)(rand() % (W_Y * 1000)) / 1000;
-        int spcy = rand() % LIB_SIZE;
+        double x = rand() % (W_X * PREC), y = rand() % (W_Y * PREC);
+        x /= PREC;
+        y /= PREC;
+        int spcy = rand() % library.size();
         fout << x << " " << y << " " << spcy << endl;
     }
     fout.close();
@@ -66,4 +68,58 @@ void nature_fill(string nature_f) {
         fin >> x >> y >> spcy;
         nature.emplace_back(x, y, library[spcy]);
     }
+}
+
+vector<object> nat_search(double x1, double x2, double y1, double y2, string name, double state) {
+    vector<object> find;
+    for (auto el : nature) {
+        if(el.get_x() >= x1 && el.get_x() < x2 &&el.get_y() >= y1 &&el.get_y() < y2 &&
+            (name == "" || el.get_type_name() == name) && (state == -1 || el.get_state() == state)) {
+            find.emplace_back(el);
+        }
+    }
+    return find;
+}
+
+void nat_draw() {
+    //system("cls");
+    for (int i = 0; i < W_X; i++) {
+        for (int j = 0; j < W_Y; j++) {
+            vector<object> fst(nat_search(i, i + 1, j, j + 1));
+            cout.width(2);
+            if (fst.size() > 0) {
+                cout << fst[0].get_type_name()[0];
+            } else {
+                cout << " ";
+            }
+        }
+        cout << " |" << endl;
+    }
+    for (int j = 0; j < W_Y; j++) {
+        cout << "__";
+    }
+    cout << "_|" << endl;
+}
+
+void nat_print() {
+    system("cls");
+    string out;
+    for (int i = 0; i < W_X; i++) {
+        for (int j = 0; j < W_Y; j++) {
+            out += "  ";
+        }
+        out += " |\n";
+    }
+    for (int j = 0; j < W_Y; j++) {
+        out += "__";
+    }
+    out += "_|";
+    for (auto el : nature) {
+        string name = el.get_type_name();
+        int x_pos = ((int)el.get_x()) * ((W_Y + 1) * 2 + 1);
+        int y_pos = ((int)el.get_y()) * 2;
+        int len = min((int)name.size(), ((W_Y + 1) * 2 - 1 - y_pos));
+        out.replace(x_pos + y_pos, len, name, 0, len);
+    }
+    cout << out << endl;
 }

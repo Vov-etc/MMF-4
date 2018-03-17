@@ -5,7 +5,8 @@
 #include <random>
 #include <ctime>
 #include <algorithm>
-#include "library.h"
+#include "includes/library.h"
+#include "includes/socket_tcp.h"
 using namespace std;
 
 
@@ -15,21 +16,16 @@ void init(string library_f = "library", string nature_f = "nature") {
 
     //library_gen(library_f, 10);
     library_fill(library_f);
-    nature_gen(nature_f, 20);
+    //nature_gen(nature_f, 20);
     nature_fill(nature_f);
 }
 
 
 int main() {
     init();
-    //sort(nature.begin(), nature.end());
-    //nat_draw();
-    library;
-    nature;
-    while (1) {
-        nat_print();
-        system("sleep 0.1");
-    }
+    ssocket listener, to_cli;
+    listener.Bind();
+    to_cli.Accept(listener);
     system("pause");
     return 0;
 }

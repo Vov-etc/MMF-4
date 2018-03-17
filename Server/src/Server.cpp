@@ -25,6 +25,7 @@ int main() {
     init();
     ssocket listener, to_cli;
     listener.Bind();
+    listener.Listen();
     to_cli.Accept(listener);
     system("pause");
     return 0;

@@ -78,9 +78,10 @@ void ssocket::Listen(int vol) {
 }
 
 void ssocket::Accept(ssocket listener) {
-    closesocket(sock);
+    //closesocket(sock);
     while (true) {
-        sock = accept(listener.get_socket(), (sockaddr*)&my_addr, NULL);
+        socklen_t client_length = sizeof(my_addr);
+        sock = accept(listener.get_socket(), (sockaddr*)&my_addr, &client_length);
         if (sock == INVALID_SOCKET) {
             cerr << "acception failed with error = " << WSAGetLastError() << endl;
         } else {

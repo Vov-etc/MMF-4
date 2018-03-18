@@ -1,7 +1,7 @@
 #ifndef SERVER_H
 #define SERVER_H
 
-#include "socket_tcp.h"
+#include "ssocket.h"
 
 class sserver {
     ssocket soket;

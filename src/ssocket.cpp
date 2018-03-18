@@ -1,4 +1,4 @@
-#include "includes/socket_tcp.h"
+#include "includes/ssocket.h"
 
 int ssocket::last_err = 0;
 int ssocket::num = 0;
@@ -31,8 +31,8 @@ ssocket::ssocket() {
     if (num == 0) {
         Start();
     }
-    sock = socket(AF_INET, SOCK_STREAM, 0);
-    if (sock == INVALID_SOCKET) {
+    my_socket = socket(AF_INET, SOCK_STREAM, 0);
+    if (my_socket == INVALID_SOCKET) {
         cerr << "socket function failed with error = " << errno << endl;
     } else {
         cerr << "socket function succeeded" << endl;
@@ -42,7 +42,7 @@ ssocket::ssocket() {
 
 ssocket::~ssocket() {
     num--;
-    last_err = closesocket(sock);
+    last_err = closesocket(my_socket);
     if (num == 0) {
         Close();
     }
@@ -52,9 +52,9 @@ void ssocket::Bind(short my_port) {
     my_addr.sin_family = AF_INET;
     my_addr.sin_port = htons(my_port);
     my_addr.sin_addr.s_addr = htonl(INADDR_ANY);
-    setsockopt(sock, SOL_SOCKET, SO_REUSEADDR, NULL, 0);
+    setsockopt(my_socket, SOL_SOCKET, SO_REUSEADDR, NULL, 0);
 
-    last_err = bind(sock, (sockaddr*)&my_addr, sizeof(my_addr));
+    last_err = bind(my_socket, (sockaddr*)&my_addr, sizeof(my_addr));
     if (last_err) {
         cerr << "binding socket failed with code" << last_err << endl;
     } else {
@@ -68,7 +68,7 @@ void ssocket::Connect(short port, string target_in_addr) {
     target_addr.sin_family = AF_INET;
     target_addr.sin_port = htons(PORT);
     last_err == inet_pton(AF_INET, target_in_addr.c_str(), &target_addr.sin_addr);
-    last_err = connect(sock, (sockaddr *)&target_addr, sizeof(target_addr));
+    last_err = connect(my_socket, (sockaddr *)&target_addr, sizeof(target_addr));
     if (last_err) {
         cerr << "connection failed with code " << last_err << endl;
     } else {
@@ -77,13 +77,13 @@ void ssocket::Connect(short port, string target_in_addr) {
 }
 
 void ssocket::Listen(int vol) {
-    listen(sock, vol);
+    listen(my_socket, vol);
     cerr << "listening started" << endl;
 }
 
 void ssocket::Accept(ssocket listener) {
-    sock = accept(listener.get_socket(), (sockaddr*)&my_addr, NULL);
-    if (sock == INVALID_SOCKET) {
+    my_socket = accept(listener.get_socket(), (sockaddr*)&my_addr, NULL);
+    if (my_socket == INVALID_SOCKET) {
         cerr << "acception failed with error = " << errno << endl;
     } else {
         cerr << "acception succeeded" << endl;

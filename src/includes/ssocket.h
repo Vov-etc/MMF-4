@@ -7,14 +7,14 @@
 #include <WinSock2.h>
 #include <ws2tcpip.h>
 #include <iostream>
-#include "sock_define.h"
+#include "ssocket_define.h"
 
 using namespace std;
 
 class ssocket {
     static int last_err;
     static int num;
-    SOCKET sock;
+    SOCKET my_socket;
     sockaddr_in my_addr;
     int id;
 
@@ -25,7 +25,7 @@ public:
     ~ssocket();
 
     SOCKET get_socket() {
-        return sock;
+        return my_socket;
     }
 
     void Bind(short my_port = PORT);

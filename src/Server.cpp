@@ -1,13 +1,12 @@
+#define UNICODE
 #include <iostream>
-#include <iomanip>
-#include <fstream>
-#include <string>
 #include <random>
 #include <ctime>
-#include <algorithm>
+#include <vector>
+#include <io.h>
+#include <fcntl.h>
 #include "includes/library.h"
-#include "includes/ssocket.h"
-#include <thread>
+#include "includes/sserver.h"
 using namespace std;
 
 
@@ -21,25 +20,27 @@ void init(string library_f = "library", string nature_f = "nature") {
     nature_fill(nature_f);
 }
 
-void tFunc(int a, int num) {
-    for (int i = 1; i < 10; i++) {
-        a += i;
-    }
-    cout << a << endl;
-}
-
 
 int main() {
-    init();
-    int a = 0;
-    thread t2(tFunc, a + 10, 0), t1(tFunc, a, 1);
-    cout << "AsDF" << endl;
-    t1.join();
-    t2.join();
-    /*ssocket listener, to_cli;
-    listener.Bind();
-    listener.Listen();
-    to_cli.Accept(listener);*/
+    //init();
+    _setmode(_fileno(stdout), _O_U16TEXT);
+    _setmode(_fileno(stdin), _O_U16TEXT);
+    _setmode(_fileno(stderr), _O_U16TEXT);
+    sserver serv;
+    while (true) {
+        vector<wchar_t> data;
+        wstring wstr;
+        getline(wcin, wstr);
+        for (auto el : wstr) {
+            data.push_back(el);
+        }
+        serv.send_to(0, data);
+        if (data.size() > 0 && data[0] == '~') {
+            if (data.size() > 1 && data[1] == '~') {
+                break;
+            }
+        }
+    }
     system("pause");
     return 0;
 }

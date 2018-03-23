@@ -13,22 +13,27 @@ int main() {
     _setmode(_fileno(stderr), _O_U16TEXT);
     wstring server_in_addr;
     string str;
-    wcin >> server_in_addr;
+    //wcin >> server_in_addr;
     for (auto el : server_in_addr) {
         str += (char)el;
     }
     ssocket to_ser;
-    to_ser.Connect(str);
+    to_ser.Connect();
     if (!to_ser.get_last_error()) {
         wcout << "you have received this messages:" << endl;
         while (true) {
             vector<wchar_t> a;
-            to_ser.Recv(a);
-            for (auto el : a) {
-                wcout << el;
-            }
-            wcout << endl;
-            if (a.size() > 0 && a[0] == '~') {
+            int len = 0;
+            len = to_ser.Recv(a);
+            if (len >= 0) {
+                for (auto el : a) {
+                    wcout << el;
+                }
+                wcout << endl;
+                if (a.size() > 0 && a[0] == '~') {
+                    break;
+                }
+            } else {
                 break;
             }
         }

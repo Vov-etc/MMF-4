@@ -16,6 +16,7 @@
 #define WSAGetLastError() errno
 typedef int SOCKET;
 #endif
+#include "buffer.h"
 using namespace std;
 
 #define SERVERADDR "127.0.0.1"
@@ -35,21 +36,21 @@ public:
     ssocket(const ssocket &other);
     ~ssocket();
 
-    static int get_last_error() {
-        return last_err;
-    }
-    SOCKET get_socket() {
-        return my_socket;
-    }
-
+    SOCKET get_socket() const;
     void Close();
     void Swap(ssocket &other);
+
     void Bind(string my_port = PORT);
     void Connect(string target_in_addr = SERVERADDR, string target_port = PORT);
     void Listen(int vol = 5);
-    void Accept(ssocket &listener);
-    void Send(char* c_data, int len);
-    template <typename T>
+    void Accept(const ssocket &listener);
+
+    int Send(char* c_data, int len);
+    int Recv(char* c_data, int len);
+    void send_buff(buffer &buff);
+    void recv_buff(buffer &buff);
+
+    /*template <typename T>
     int Recv(vector<T> &data) {
         int len;
         last_err = recv(my_socket, (char*)&len, sizeof(int) / sizeof(char), 0);
@@ -66,7 +67,8 @@ public:
             }
         }
         return len;
-    }
+    }*/
+
 };
 
 #endif // !SSOCKET_H

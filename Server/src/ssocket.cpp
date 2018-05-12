@@ -118,17 +118,17 @@ void ssocket::Connect(string target_in_addr, string target_port) {
 
     my_socket = socket(target_addr->ai_family, target_addr->ai_socktype, target_addr->ai_protocol);
     if (my_socket == INVALID_SOCKET) {
-        is_open = false;
         wcerr << "/n" << my_socket << " socket function failed with code " << WSAGetLastError() << endl;
     } else {
-        is_open = true;
         wcerr << my_socket << " socket function succeeded" << endl;
     }
 
     last_err = connect(my_socket, target_addr->ai_addr, target_addr->ai_addrlen);
     if (last_err) {
+        is_open = false;
         wcerr << my_socket << " connection failed with code " << WSAGetLastError() << endl;
     } else {
+        is_open = true;
         wcerr << my_socket << " connection succeeded" << endl;
     }
     freeaddrinfo(target_addr);
@@ -152,35 +152,46 @@ void ssocket::Accept(const ssocket &listener) {
     }
 }
 
+bool ssocket::Is_Open() {
+    return is_open;
+}
+
 int ssocket::Send(char* c_data, int len) {
     int sended = 0;
+    c_data[2];
     while (sended != len) {
         int temp = 0;
         temp = send(my_socket, c_data, len, 0);
         if (temp < 0) {
+            wcout << WSAGetLastError() << endl;
             Close();
             return -1;
         }
         sended += temp;
     }
-    return len;
+    return sended;
 }
 int ssocket::Recv(char* c_data, int len) {
-    last_err = recv(my_socket, c_data, len, 0);
-    if (last_err < 0) {
+    int recved = recv(my_socket, c_data, len, 0);
+    if (recved < 0) {
         Close();
         return -1;
     }
-    return len;
+    return recved;
 }
-void ssocket::send_buff(buffer &buff) {
+
+/*void ssocket::send_buff(buffer &buff) {
+    int len = buff.Size();
+    Send((char*)&len, sizeof(int) / sizeof(char));
     buff.lock();
     Send(buff.Data(), buff.Size());
     buff.unlock();
 }
 void ssocket::recv_buff(buffer &buff) {
+    int len = -1;
+    Recv((char*)&len, sizeof(int) / sizeof(char));
     buff.lock();
+    buff.resize(len);
     Recv(buff.Data(), buff.Size());
     buff.unlock();
-
-}
+}*/

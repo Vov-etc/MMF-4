@@ -14,7 +14,7 @@ public:
     buffer(int _size = 0);
 
     int Size() const;
-    char* Data();
+    char* Data() const;
 
     void lock();
     void unlock();
@@ -22,6 +22,7 @@ public:
     void resize(int len);
 
     void s_cpy_to_buff(string &str);
+    void ws_cpy_to_buff(wstring &wstr);
     template <typename T>
     void v_cpy_to_buff(vector<T> vec) {
         lock();

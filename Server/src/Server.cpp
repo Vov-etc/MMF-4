@@ -1,20 +1,14 @@
-#include "includes/sserver.h"
-#include "includes/buffer.h"
+#include "includes/lobby.h"
 #include <iostream>
 #include <random>
 #include <ctime>
 #include <vector>
-#include <io.h>
-#include <fcntl.h>
 //#include "includes/library.h"
 using namespace std;
 
 
 void init(string library_f = "library", string nature_f = "nature") {
     srand(time(0));
-    _setmode(_fileno(stdout), _O_U16TEXT);
-    _setmode(_fileno(stdin), _O_U16TEXT);
-    _setmode(_fileno(stderr), _O_U16TEXT);
     //library_gen(library_f, 10);
     //library_fill(library_f);
     //nature_gen(nature_f, 20);
@@ -24,25 +18,31 @@ void init(string library_f = "library", string nature_f = "nature") {
 
 int main() {
     init();
-    sserver serv;
+    lobby game;
     while (true) {
-        if (serv.clients.size() > 0) {
+        if (game.num_of_players() > 1) {
             int cli = 0;
-            wstring wstr;
-            vector<wchar_t> data;
-            for (auto el : serv.clients) {
-                wcout << el.first << " ";
+            for (auto el : game.get_players()) {
+                cout << el.first << " ";
             }
-            wcout << endl;
-            wcin >> cli;
-            wcin.ignore();
-            getline(wcin, wstr);
-            for (auto &el : wstr) {
-                data.push_back(el);
-            }
-            serv.send_to(cli, data);
-            if (data.size() > 0 && data[0] == '~') {
-                if (data.size() > 1 && data[1] == '~') {
+            cout << endl;
+
+            string str;
+            cin >> cli;
+            cin.ignore();
+            getline(cin, str);
+            /*game.recv_from(cli);
+            game.players[cli].in.print();
+            str = "HTTP/1.x 200 OK\nDate: Tue, 21 Jul 2009 17:09:54 GMT\nLast-Modified: Tue, 15 Nov 2005 13:24:10 GMT\nContent-Length: 89\nConnection: keep-alive\nContent-Type: text/html\n\n<HTML>\n<HEAD>\n<TITLE>Example Web Page</TITLE>\n</HEAD>\n<body>\n<p>HI!</p>\n</BODY>\n</HTML>\n\n";
+            game.send_to(cli, str);
+            game.recv_from(cli);
+            game.players[cli].in.print();
+            cin >> str;
+            str = "HTTP/1.x 200 OK\nDate: Tue, 21 Jul 2009 17:09:54 GMT\nLast-Modified: Tue, 15 Nov 2005 13:24:10 GMT\nContent-Length: 92\nConnection: keep-alive\nContent-Type: text/html\n\n<HTML>\n<HEAD>\n<TITLE>Example Web Page</TITLE>\n</HEAD>\n<body>\n<p>HI!HI!</p>\n</BODY>\n</HTML>\n\n";
+            */
+            game.send_to(cli, str);
+            if (str.size() > 0 && str[0] == '~') {
+                if (str.size() > 1 && str[1] == '~') {
                     break;
                 }
             }

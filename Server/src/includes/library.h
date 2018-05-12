@@ -15,19 +15,12 @@ static int NAT_SIZE = 10000;
 
 class species {
     static int amount;
-public:
     string name, dscr;
     species *drop;
-
-    species(string _name = "", string _dscr = "") :
-        name(_name),
-        dscr(_dscr) {
-        amount++;
-    }
-    ~species() {
-        amount--;
-    }
-
+public:
+    species(string _name = "", string _dscr = "");
+    ~species();
+    string get_name() const;
 };
 
 
@@ -48,47 +41,19 @@ class object {
     int num;
     block *form;
 public:
-    object(double _x, double _y, species _type, double _state = 1) :
-        x(_x),
-        y(_y),
-        type(_type),
-        num(amount),
-        state(_state) {
-        amount++;
-    };
-    ~object() {
-        amount--;
-    }
-    double get_x() {
-        return x;
-    }
-    double get_y() {
-        return y;
-    }
-    string get_type_name() {
-        return type.name;
-    }
-    double get_state() {
-        return state;
-    }
+    object(double _x, double _y, species _type, double _state = 1);
+    ~object();
+    double get_x();
+    double get_y();
+    string get_type_name();
+    double get_state();
 
-    const species& get_type() const {
-        return type;
-    }
-    int get_num() {
-        return num;
-    }
-    bool operator<(const object &other) const {
-        return type.name < other.type.name;
-    }
+    const species& get_type() const;
+    int get_num();
+    bool operator<(const object &other) const;
 
-    void print() {
-
-    }
-    void drow() {
-        cout.width(2);
-        cout << type.name[0];
-    }
+    void print();
+    void drow();
 };
 
 

@@ -1,17 +1,12 @@
 #include <iostream>
 #include <vector>
 #include <string>
-#include <io.h>
-#include <fcntl.h>
 #include "includes/ssocket.h"
 using namespace std;
 
 
 int main() {
-    _setmode(_fileno(stdout), _O_U16TEXT);
-    _setmode(_fileno(stdin), _O_U16TEXT);
-    _setmode(_fileno(stderr), _O_U16TEXT);
-    wstring server_in_addr;
+    string server_in_addr;
     string str;
     //wcin >> server_in_addr;
     for (auto el : server_in_addr) {
@@ -19,24 +14,19 @@ int main() {
     }
     ssocket to_ser;
     to_ser.Connect();
-    if (!to_ser.get_last_error()) {
-        wcout << "you have received this messages:" << endl;
+    if (to_ser.Is_Open()) {
+        cout << "you have received this messages:" << endl;
         while (true) {
-            vector<wchar_t> a;
-            int len = 0;
-            len = to_ser.Recv(a);
-            if (len >= 0) {
-                for (auto el : a) {
-                    wcout << el;
-                }
-                wcout << endl;
-                if (a.size() > 0 && a[0] == '~') {
-                    break;
-                }
+            buffer buff;
+            to_ser.recv_buff(buff);
+            if (buff.Size() >= 0) {
+                buff.print();
             } else {
                 break;
             }
         }
+    } else {
+       cerr << WSAGetLastError() << endl;
     }
     system("pause");
     return 0;

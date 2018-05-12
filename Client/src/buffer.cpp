@@ -10,13 +10,13 @@ buffer::buffer(int _size) {
 int buffer::Size() const {
     return size;
 }
-char* buffer::Data()  {
+char* buffer::Data() const {
     return data;
 }
 
 void buffer::resize(int len) {
     size = len;
-    delete[] data;
+    delete data;
     data = new char[len];
 }
 void buffer::lock() {
@@ -35,6 +35,13 @@ void buffer::s_cpy_to_buff(string &str) {
     size = str.size();
     resize(size);
     memcpy_s(data, size, str.c_str(), size);
+    unlock();
+}
+void buffer::ws_cpy_to_buff(wstring &wstr) {
+    lock();
+    size = wstr.size() * sizeof(wchar_t) / sizeof(char);
+    resize(size);
+    memcpy_s(data, size, wstr.c_str(), size);
     unlock();
 }
 

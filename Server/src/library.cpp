@@ -5,7 +5,64 @@
 using namespace std;
 
 int species::amount = 0;
+
+species::species(string _name, string _dscr) :
+    name(_name),
+    dscr(_dscr) {
+    amount++;
+}
+species::~species() {
+    amount--;
+}
+string species::get_name() const {
+    return name;
+}
+
+
 int object::amount = 0;
+
+object::object(double _x, double _y, species _type, double _state) :
+    x(_x),
+    y(_y),
+    type(_type),
+    num(amount),
+    state(_state) {
+    amount++;
+};
+object::~object() {
+    amount--;
+}
+double object::get_x() {
+    return x;
+}
+double object::get_y() {
+    return y;
+}
+string object::get_type_name() {
+    return type.get_name();
+}
+double object::get_state() {
+    return state;
+}
+
+const species& object::get_type() const {
+    return type;
+}
+int object::get_num() {
+    return num;
+}
+bool object::operator<(const object &other) const {
+    return type.get_name() < other.type.get_name();
+}
+
+void object::print() {
+
+}
+void object::drow() {
+    cout.width(2);
+    cout << type.get_name()[0];
+}
+
 
 vector <species> library;
 vector <object> nature;
